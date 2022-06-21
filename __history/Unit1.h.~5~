@@ -31,7 +31,6 @@ __published:	// IDE-managed Components
 
 
 private:	// User declarations
-	class Read* Read;
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
 };

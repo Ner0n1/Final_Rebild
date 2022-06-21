@@ -50,7 +50,7 @@
   {
 	  BYTE indent[3];
       char OEM[8];
-  } AbsFS;
+  } AFS;
 
   class AFS
 {
@@ -68,14 +68,13 @@
 		unsigned long GetSecInCluster();
 		unsigned long GetNumberOfClusters();
 		const wchar_t* GetOEM();
-		AFS(const wchar_t* path);
+		AbstractFS(const wchar_t* path);
 };
 
 class FAT32: public AFS{
 	public:
 		FAT32(const wchar_t* path);
 };
-
 class NTFS: public AFS{
 	public:
 		NTFS(const wchar_t* path);

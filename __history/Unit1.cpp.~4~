@@ -35,7 +35,7 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
 
 	Memo1-> Lines -> Add(UnicodeString(FS->GetOEM()));
 	Memo1-> Lines -> Add(UnicodeString(FS->GetBytesInSec()));
-	Memo1-> Lines -> Add(UnicodeString(FS->GetSecInCluster()));
+	Memo1-> Lines -> Add(UnicodeString(FS->GetSectorsInCluster()));
 	Memo1-> Lines -> Add(UnicodeString(FS->GetBytesInCluster()));
 	Memo1-> Lines -> Add(UnicodeString(FS->GetNumberOfClusters()));
 	Button3 -> Enabled = true;
@@ -60,13 +60,13 @@ void __fastcall TForm1::Button3Click(TObject *Sender)
 		else if (res== SQLITE_ROW)
 		{
 			PVirtualNode Node = VirtualStringTree1 -> AddChild(VirtualStringTree1 -> RootNode);
-			Struct *nodeData = (TreeNodeStruct*)VirtualStringTree1 -> GetNodeData(Node);
+			TreeNodeStruct *nodeData = (TreeNodeStruct*)VirtualStringTree1 -> GetNodeData(Node);
 			nodeData -> ClusterNumber = sqlite3_column_int(Stmt,0);
 			nodeData -> Signature = (UnicodeString)(char*)sqlite3_column_text(Stmt,1);
 		}
 		else
 		{
-			Label1 -> Caption = L"Error in update table!";
+			Label1 -> Caption = L"Error in update table!",L"ERROR", MB_OK);
 			break;
 		}
 
@@ -81,7 +81,7 @@ void __fastcall TForm1::Button3Click(TObject *Sender)
 	Button1 -> Enabled = true;
 	Edit1 -> Enabled = true;
 }
-
+}
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::VirtualStringTree1GetText(TBaseVirtualTree *Sender, PVirtualNode Node,
@@ -89,7 +89,7 @@ void __fastcall TForm1::VirtualStringTree1GetText(TBaseVirtualTree *Sender, PVir
 
 {
 	if(!Node) return;
-	Struct *nodeData = (Struct*)VirtualStringTree1 -> GetNodeData(Node);
+	TreeNodeStruct *nodeData = (TreeNodeStruct*)VirtualStringTree1 -> GetNodeData(Node);
 
 		switch (Column) {
 
@@ -103,7 +103,7 @@ void __fastcall TForm1::VirtualStringTree1GetText(TBaseVirtualTree *Sender, PVir
 			}
         }
 }
-
+}
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::Button5Click(TObject *Sender)
@@ -124,9 +124,9 @@ void __fastcall TForm1::Button5Click(TObject *Sender)
 		Label1 -> Caption = L"Error trying delete!";
 		return;
 	}
-	sqlite3_finalize(Stmt);
+	sqlite3_finalize(pStatement);
 }
-
+}
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::Button4Click(TObject *Sender)
@@ -158,10 +158,10 @@ void __fastcall TForm1::Button4Click(TObject *Sender)
 	{
 		res = sqlite3_step(Stmt);
 		if(res == SQLITE_DONE) break;
-		else if (res == SQLITE_ROW)
+		else if (result == SQLITE_ROW)
 		{
 			PVirtualNode Node = VirtualStringTree1 -> AddChild(VirtualStringTree1 -> RootNode);
-			Struct *nodeData = (Struct*)VirtualStringTree1 -> GetNodeData(Node);
+			TreeNodeStruct *nodeData = (TreeNodeStruct*)VirtualStringTree1 -> GetNodeData(Node);
 			nodeData -> ClusterNumber = sqlite3_column_int(Stmt,0);
 			nodeData -> Signature = (UnicodeString)(char*)sqlite3_column_text(Stmt,1);
 			}
@@ -172,7 +172,7 @@ void __fastcall TForm1::Button4Click(TObject *Sender)
 		}
 
 	}
-	sqlite3_finalize(Stmt);
+	sqlite3_finalize(pStatement);
 	VirtualStringTree1 -> EndUpdate();
 }
 //---------------------------------------------------------------------------
@@ -182,7 +182,7 @@ void __fastcall TForm1::VirtualStringTree1AddToSelection(TBaseVirtualTree *Sende
 {
     if (!Node) return;
 	Button4 -> Enabled = True;
-	Struct *nodeData = (Struct*)VirtualStringTree1 -> GetNodeData(Node);
+    TreeNodeStruct *nodeData = (TreeNodeStruct*)VirtualStringTree1 -> GetNodeData(Node);
 	id = nodeData -> ClusterNumber;
 }
 //---------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 #ifndef IterH
 #define IterH
 //---------------------------------------------------------------------------
-class Iter
+class Iterator
 {
 	protected:
 	   unsigned long ClusterNumber;

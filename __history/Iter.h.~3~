@@ -11,9 +11,9 @@ class Iter
 	   BYTE* ClusterContent;
 	   unsigned long NumberOfClusters;
 	   bool Done;
-	   AFS* FS;
+	   AbstractFS* FS;
 	public:
-		Iter(AFS* FS);
+        Iterator(AFS* FS);
 		unsigned long GetClusterNumber();
 		BYTE* GetClusterContent();
 		bool IsDone();

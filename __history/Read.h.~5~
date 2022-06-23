@@ -15,7 +15,7 @@ private:
 protected:
 	AFS* FS;
 	bool Ignore;
-	Iter* Iter;
+	Iter* Iter(AFS* FS);
 	BYTE* Value;
 	sqlite3* DB;
 	void __fastcall Error1();

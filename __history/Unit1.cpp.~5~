@@ -6,7 +6,6 @@
 #include "Unit1.h"
 #include "sqlite3.h"
 #include "FS.h"
-#include "Read.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "VirtualTrees"
@@ -41,7 +40,7 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
 	Memo1-> Lines -> Add(UnicodeString(FS->GetNumberOfClusters()));
 	Button3 -> Enabled = true;
 	bool Ignore = CheckBox1 -> Checked;
-	ReadT = new Read(false, FS, Ignore, DB);
+	Read = new Read(false, FS, Ignore, DB);
 
 }
 //---------------------------------------------------------------------------
@@ -49,11 +48,11 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
 
 void __fastcall TForm1::Button3Click(TObject *Sender)
 {
-	ReadT -> Terminate();
+	Read -> Terminate();
 	VirtualStringTree1 -> Clear();
 	VirtualStringTree1 -> BeginUpdate();
 	sqlite3_stmt *Stmt;
-	int res = sqlite3_prepare16_v2(DB, L"SELECT * FROM Clusters ORDER BY ClusterNumber", -1, &Stmt, NULL);
+	int result = sqlite3_prepare16_v2(Database, L"SELECT * FROM Clusters ORDER BY ClusterNumber", -1, &Stmt, NULL);
 	while (true)
 	{
 		res = sqlite3_step(Stmt);
@@ -61,9 +60,9 @@ void __fastcall TForm1::Button3Click(TObject *Sender)
 		else if (res== SQLITE_ROW)
 		{
 			PVirtualNode Node = VirtualStringTree1 -> AddChild(VirtualStringTree1 -> RootNode);
-			Struct *nodeData = (Struct*)VirtualStringTree1 -> GetNodeData(Node);
+			Struct *nodeData = (TreeNodeStruct*)VirtualStringTree1 -> GetNodeData(Node);
 			nodeData -> ClusterNumber = sqlite3_column_int(Stmt,0);
-			nodeData -> Sig = (UnicodeString)(char*)sqlite3_column_text(Stmt,1);
+			nodeData -> Signature = (UnicodeString)(char*)sqlite3_column_text(Stmt,1);
 		}
 		else
 		{
@@ -100,7 +99,7 @@ void __fastcall TForm1::VirtualStringTree1GetText(TBaseVirtualTree *Sender, PVir
 			}
 			case 1:
 			{
-				CellText = nodeData -> Sig; break;
+				CellText = nodeData -> Signature; break;
 			}
         }
 }
@@ -164,7 +163,7 @@ void __fastcall TForm1::Button4Click(TObject *Sender)
 			PVirtualNode Node = VirtualStringTree1 -> AddChild(VirtualStringTree1 -> RootNode);
 			Struct *nodeData = (Struct*)VirtualStringTree1 -> GetNodeData(Node);
 			nodeData -> ClusterNumber = sqlite3_column_int(Stmt,0);
-			nodeData -> Sig = (UnicodeString)(char*)sqlite3_column_text(Stmt,1);
+			nodeData -> Signature = (UnicodeString)(char*)sqlite3_column_text(Stmt,1);
 			}
 		else
 		{

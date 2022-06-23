@@ -2,7 +2,6 @@
 
 #ifndef FSH
 #define FSH
-#include "Unit1.h"
 //---------------------------------------------------------------------------
 #pragma pack(push,1)
  typedef struct
@@ -61,7 +60,7 @@
 		unsigned long BytesInSec;
 		unsigned long BytesInCluster;
 		unsigned long SecInCluster;
-		unsigned long NumOfClusters;
+		unsigned long NumberOfClusters;
 		const wchar_t* OEM;
 	public:
 		HANDLE GetHandle();
@@ -71,7 +70,6 @@
 		unsigned long GetNumberOfClusters();
 		const wchar_t* GetOEM();
 		AFS(const wchar_t* path);
-
 };
 
 class FAT32: public AFS{

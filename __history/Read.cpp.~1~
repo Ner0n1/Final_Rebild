@@ -24,24 +24,9 @@
 //        Form1->Caption = "Updated in a thread";
 //      }
 //---------------------------------------------------------------------------
-bool Decor(BYTE* Value){
-	if (Value[0] == 0x00) {
-		return false;
-	}
-	return true;
-}
 
-void __fastcall Read::Error1()
-{
-	Form1->Label1->Caption = L"Error on Insert into!";
-}
-
-void __fastcall Read::Error2()
-{
-	Form1->Label1->Caption = L"Error on update table!";
-}
-
-__fastcall Read::Read(bool CreateSuspended, AFS* FS, bool Ignore, sqlite3* DB)
+__fastcall Read::Read(bool CreateSuspended, AFS* FS, bool Ignore,
+sqlite3* DB)
 	: TThread(CreateSuspended), FS(FS), Ignore(Ignore), DB(DB)
 {
 	FreeOnTerminate = true;
@@ -59,7 +44,7 @@ void __fastcall Read::Execute()
 		Value = Iter ->GetClusterContent();
 		if(Ignore)
 		{
-			bool Dec = Decor(Value);
+			bool Decor = Decor(Value);
 			if (!Dec)
 			{
 				continue;
@@ -94,19 +79,23 @@ void __fastcall Read::Execute()
 			&Stmt, NULL);
 			if (res != SQLITE_OK)
 			{
-				Synchronize(&Error1);
+				Form1->Label1->Text = L"Error on Insert into!";
 			}else
 			{
 				res = sqlite3_step(Stmt);
 				if(res != SQLITE_DONE)
 				{
-					Synchronize(&Error2);
+						Form1->Label1->Text = L"Error on update table!";
 				}
 			}
-			sqlite3_finalize(Stmt);
+			sqlite3_finalize(pStatement);
 		}
 	 }
 }
 //---------------------------------------------------------------------------
-
-
+bool Decor(BYTE* Value){
+	if (Value[0] == 0x00) {
+		return false;
+	}
+	return true;
+}

@@ -12,7 +12,7 @@ AFS::AFS(const wchar_t* path)
 	FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0,NULL);
 }
 
-NTFS::NTFS(const wchar_t* path) : AFS(path)
+NTFS::NTFS(const wchar_t* target) :AFS(path)
 {
 	DWORD bytesRead;
 	DWORD bytes = 512;
@@ -34,7 +34,7 @@ NTFS::NTFS(const wchar_t* path) : AFS(path)
 	   Form1 -> Label1 -> Caption = L"Error while read!";
 	   CloseHandle(Handle);
 	}
-	NTFS_BR *ptrNTFS = (NTFS_BR*)Block;
+	NTFS *ptrNTFS = (NTFS*)Block;
 	BytesInSec = ptrNTFS -> BytesInSec;
 	SecInCluster = ptrNTFS-> SecInCluster;
 	BytesInCluster =  BytesInSec*SecInCluster;
@@ -42,7 +42,7 @@ NTFS::NTFS(const wchar_t* path) : AFS(path)
 	NumOfClusters = (ptrNTFS -> NumberOfSectors)/SecInCluster;
 }
 
-FAT32::FAT32(const wchar_t* path) : AFS(path)
+FAT32::FAT32(const wchar_t* target) : AFS(path)
 {
 
 	DWORD bytesRead;
@@ -66,18 +66,18 @@ FAT32::FAT32(const wchar_t* path) : AFS(path)
 	   CloseHandle(Handle);
 	}
 
-	FAT32_BR *ptrFAT32 = (FAT32_BR*)Block;
+	FAT32 *ptrFAT32 = (FAT32*)Block;
 	BytesInSec = ptrFAT32 -> BytesInSec;
 	SecInCluster = ptrFAT32 -> SecInCluster;
 	BytesInCluster =  BytesInSec*SecInCluster;
 	OEM = L"FAT32";
-	if (ptrFAT32->LargeSec != 0)
+	if (ptrFAT32->LargeSectors != 0)
 	{
-		 NumOfClusters = (ptrFAT32->LargeSec)/SecInCluster;
+		 NumberOfClusters = (ptrFAT32->LargeSectors)/SecInCluster;
 	}
 	else
 	{
-		 NumOfClusters = (ptrFAT32->SmallSec)/SecInCluster;
+		 NumberfClusters = (ptrFAT32->SmallSectors)/SecInCluster;
 	}
 }
 
@@ -95,7 +95,7 @@ unsigned long AFS::GetSecInCluster(){
 	return SecInCluster;
 }
 unsigned long AFS::GetNumberOfClusters(){
-	return NumOfClusters;
+	return NumberOfClusters;
 }
 const wchar_t* AFS::GetOEM(){
 	return OEM;
@@ -134,11 +134,11 @@ AFS* FactoryFS(const wchar_t* path)
 	AFS *ptrAFS = (AFS*)Block;
 	CloseHandle(Handle);
 
-	if (strcmp(ptrAFS ->OEM,"NTFS"))
+	if (strstr(ptrAFS ->OEM,"NTFS"))
 	{
 	   FS = new NTFS(path);
 	}
-	else if (strcmp(ptrAFS -> OEM,"MSDOS5.0"))
+	else if (strstr(ptrAbstract_FS -> OEM,"MSDOS5.0"))
 	{
 	   FS = new FAT32(path);
 	}

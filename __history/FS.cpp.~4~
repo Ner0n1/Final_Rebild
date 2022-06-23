@@ -73,7 +73,7 @@ FAT32::FAT32(const wchar_t* path) : AFS(path)
 	OEM = L"FAT32";
 	if (ptrFAT32->LargeSec != 0)
 	{
-		 NumOfClusters = (ptrFAT32->LargeSec)/SecInCluster;
+		 NumberOfClusters = (ptrFAT32->LargeSec)/SecInCluster;
 	}
 	else
 	{
@@ -95,7 +95,7 @@ unsigned long AFS::GetSecInCluster(){
 	return SecInCluster;
 }
 unsigned long AFS::GetNumberOfClusters(){
-	return NumOfClusters;
+	return NumberOfClusters;
 }
 const wchar_t* AFS::GetOEM(){
 	return OEM;
@@ -134,11 +134,11 @@ AFS* FactoryFS(const wchar_t* path)
 	AFS *ptrAFS = (AFS*)Block;
 	CloseHandle(Handle);
 
-	if (strcmp(ptrAFS ->OEM,"NTFS"))
+	if (strstr(ptrAFS ->OEM,"NTFS"))
 	{
 	   FS = new NTFS(path);
 	}
-	else if (strcmp(ptrAFS -> OEM,"MSDOS5.0"))
+	else if (strstr(ptrAFS -> OEM,"MSDOS5.0"))
 	{
 	   FS = new FAT32(path);
 	}

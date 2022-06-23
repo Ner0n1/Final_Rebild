@@ -8,11 +8,11 @@
 #pragma package(smart_init)
 AFS::AFS(const wchar_t* path)
 {
-	Handle = CreateFileW(path, GENERIC_READ,
+	Handle = CreateFileW(target, GENERIC_READ,
 	FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0,NULL);
 }
 
-NTFS::NTFS(const wchar_t* path) : AFS(path)
+NTFS::NTFS(const wchar_t* target) :AFS(path)
 {
 	DWORD bytesRead;
 	DWORD bytes = 512;
@@ -34,15 +34,15 @@ NTFS::NTFS(const wchar_t* path) : AFS(path)
 	   Form1 -> Label1 -> Caption = L"Error while read!";
 	   CloseHandle(Handle);
 	}
-	NTFS_BR *ptrNTFS = (NTFS_BR*)Block;
+	NTFS *ptrNTFS = (NTFS*)Block;
 	BytesInSec = ptrNTFS -> BytesInSec;
 	SecInCluster = ptrNTFS-> SecInCluster;
-	BytesInCluster =  BytesInSec*SecInCluster;
+	BytesPerCluster =  BytesPerSector*SectorsPerCluster;
 	OEM = L"NTFS";
 	NumOfClusters = (ptrNTFS -> NumberOfSectors)/SecInCluster;
 }
 
-FAT32::FAT32(const wchar_t* path) : AFS(path)
+FAT32::FAT32(const wchar_t* target) : AFS(path)
 {
 
 	DWORD bytesRead;
@@ -51,7 +51,7 @@ FAT32::FAT32(const wchar_t* path) : AFS(path)
 	LARGE_INTEGER offset;
 	offset.QuadPart = 0;
 
-	unsigned long pos = SetFilePointer(Handle, offset.LowPart,
+	unsigned long pos = SetFilePointer(DiskHandle, offset.LowPart,
 	&offset.HighPart, FILE_BEGIN);
 	if (pos != offset.LowPart)
 	{
@@ -59,25 +59,25 @@ FAT32::FAT32(const wchar_t* path) : AFS(path)
 	   CloseHandle(Handle);
 	}
 
-	bool ReadSec = ReadFile(Handle, Block, bytes, &bytesRead, NULL);
+	bool ReadSec = ReadFile(DiskHandle, Block, bytes, &bytesRead, NULL);
 	if (ReadSec == false || bytesRead != bytes)
 	{
 	   Form1 -> Label1 -> Caption = L"Error while read!";
 	   CloseHandle(Handle);
 	}
 
-	FAT32_BR *ptrFAT32 = (FAT32_BR*)Block;
+	FAT32 *ptrFAT32 = (FAT32*)Block;
 	BytesInSec = ptrFAT32 -> BytesInSec;
 	SecInCluster = ptrFAT32 -> SecInCluster;
 	BytesInCluster =  BytesInSec*SecInCluster;
 	OEM = L"FAT32";
-	if (ptrFAT32->LargeSec != 0)
+	if (ptrFAT32->LargeSectors != 0)
 	{
-		 NumOfClusters = (ptrFAT32->LargeSec)/SecInCluster;
+		 NumOfClusters = (ptrFAT32->LargeSectors)/SecInCluster;
 	}
 	else
 	{
-		 NumOfClusters = (ptrFAT32->SmallSec)/SecInCluster;
+		 NumOfClusters = (ptrFAT32->SmallSectors)/SecInCluster;
 	}
 }
 
@@ -95,7 +95,7 @@ unsigned long AFS::GetSecInCluster(){
 	return SecInCluster;
 }
 unsigned long AFS::GetNumberOfClusters(){
-	return NumOfClusters;
+	return NumberOfClusters;
 }
 const wchar_t* AFS::GetOEM(){
 	return OEM;
@@ -108,9 +108,9 @@ AFS* FactoryFS(const wchar_t* path)
 	BYTE Block[512];
 	LARGE_INTEGER offset;
 	offset.QuadPart = 0;
-	AFS* FS;
+	AbstractFS* FS;
 
-	HANDLE Handle = CreateFileW(path, GENERIC_READ,
+	HANDLE Handle = CreateFileW(target, GENERIC_READ,
 	FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0,NULL);
 
 	if (Handle == INVALID_HANDLE_VALUE)
@@ -134,11 +134,11 @@ AFS* FactoryFS(const wchar_t* path)
 	AFS *ptrAFS = (AFS*)Block;
 	CloseHandle(Handle);
 
-	if (strcmp(ptrAFS ->OEM,"NTFS"))
+	if (strstr(ptrAFS ->OEM,"NTFS"))
 	{
 	   FS = new NTFS(path);
 	}
-	else if (strcmp(ptrAFS -> OEM,"MSDOS5.0"))
+	else if (strstr(ptrAbstract_FS -> OEM,"MSDOS5.0"))
 	{
 	   FS = new FAT32(path);
 	}

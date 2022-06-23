@@ -2,9 +2,7 @@
 
 #ifndef FSH
 #define FSH
-#include "Unit1.h"
 //---------------------------------------------------------------------------
-#pragma pack(push,1)
  typedef struct
  {
 	BYTE indent1[3];
@@ -23,7 +21,7 @@
 	BYTE indent4[3];
 	ULONGLONG SerialNumber;
 	USHORT Checksum;
-  } NTFS_BR;
+  } NTFS_BootRecord;
 
   typedef struct
   {
@@ -46,7 +44,7 @@
 	BYTE SerialNumber[4];
 	BYTE Label[11];
 	ULONGLONG ID;
-  } FAT32_BR;
+  } FAT32;
 
   typedef struct
   {
@@ -61,7 +59,7 @@
 		unsigned long BytesInSec;
 		unsigned long BytesInCluster;
 		unsigned long SecInCluster;
-		unsigned long NumOfClusters;
+		unsigned long NumberOfClusters;
 		const wchar_t* OEM;
 	public:
 		HANDLE GetHandle();
@@ -71,7 +69,6 @@
 		unsigned long GetNumberOfClusters();
 		const wchar_t* GetOEM();
 		AFS(const wchar_t* path);
-
 };
 
 class FAT32: public AFS{

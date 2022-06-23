@@ -21,9 +21,9 @@ int SigSearch(BYTE* Value)
 	{
 		for(j=0;j<sizeof(Sig[i]);j++)
 		{
-			if(Value[j]==Sig[i][j])
+			if(Value[j]==Signatures[i][j])
 			{
-				if(j==sizeof(Sig[i])-1)
+				if(j==sizeof(Signatures[i])-1)
 				{
                     return i;
 				}

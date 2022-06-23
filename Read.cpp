@@ -45,7 +45,7 @@ __fastcall Read::Read(bool CreateSuspended, AFS* FS, bool Ignore, sqlite3* DB)
 	: TThread(CreateSuspended), FS(FS), Ignore(Ignore), DB(DB)
 {
 	FreeOnTerminate = true;
-	Iter = new Iter(FS);
+	Iter = new class Iter(FS);
 }
 //---------------------------------------------------------------------------
 void __fastcall Read::Execute()

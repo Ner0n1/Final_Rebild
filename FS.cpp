@@ -4,6 +4,7 @@
 
 #include "FS.h"
 #include "Unit1.h"
+#include <cstring>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 AFS::AFS(const wchar_t* path)
@@ -121,24 +122,24 @@ AFS* FactoryFS(const wchar_t* path)
 
 	unsigned long pos = SetFilePointer(Handle, offset.LowPart,
 	&offset.HighPart, FILE_BEGIN);
-	if (pos != offset.LowPart) {
+	if (pos != offset.LowPart)
+	{
 	   Form1 -> Label1 -> Caption = L"Error while set position!";
 	   CloseHandle(Handle);
 	}
 
 	bool ReadSec = ReadFile(Handle, Block, bytes, &bytesRead, NULL);
-	if (ReadSec == false || bytesRead != bytes){
+	if (ReadSec == false || bytesRead != bytes)
+	{
 		Form1 -> Label1 -> Caption = L"Error while reading!";
 		CloseHandle(Handle);
 	}
-	AFS *ptrAFS = (AFS*)Block;
-	CloseHandle(Handle);
-
-	if (strcmp(ptrAFS ->OEM,"NTFS"))
+	AbsFS *ptrAFS = (AbsFS*)Block;
+	if (strstr(ptrAFS ->OEM,"NTFS"))
 	{
 	   FS = new NTFS(path);
 	}
-	else if (strcmp(ptrAFS -> OEM,"MSDOS5.0"))
+	else if (strstr(ptrAFS -> OEM,"MSDOS5.0"))
 	{
 	   FS = new FAT32(path);
 	}
@@ -146,5 +147,6 @@ AFS* FactoryFS(const wchar_t* path)
 	{
 	   Form1 -> Label1 -> Caption = L"Unknown fs type!";
 	}
+	CloseHandle(Handle);
 	return FS;
 }

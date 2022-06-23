@@ -23,14 +23,21 @@ object Form1: TForm1
     Top = 56
     Width = 297
     Height = 321
-    Header.AutoSizeIndex = 0
-    Header.MainColumn = -1
+    Header.AutoSizeIndex = -1
     TabOrder = 0
     OnAddToSelection = VirtualStringTree1AddToSelection
     OnGetText = VirtualStringTree1GetText
     Touch.InteractiveGestures = [igPan, igPressAndTap]
     Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
-    Columns = <>
+    Columns = <
+      item
+        Position = 0
+        Text = 'Id'
+      end
+      item
+        Position = 1
+        Text = 'Sign'
+      end>
   end
   object Memo1: TMemo
     Left = 355

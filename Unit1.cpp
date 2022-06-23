@@ -31,14 +31,15 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::Button1Click(TObject *Sender)
 {
-    path = (Edit1->Text).c_str();
+	path = (Edit1->Text).c_str();
 	FS = FactoryFS(path);
-
+	Memo1 -> Clear();
 	Memo1-> Lines -> Add(UnicodeString(FS->GetOEM()));
-	Memo1-> Lines -> Add(UnicodeString(FS->GetBytesInSec()));
-	Memo1-> Lines -> Add(UnicodeString(FS->GetSecInCluster()));
-	Memo1-> Lines -> Add(UnicodeString(FS->GetBytesInCluster()));
-	Memo1-> Lines -> Add(UnicodeString(FS->GetNumberOfClusters()));
+	Memo1-> Lines -> Add(L"Byte in sector: " +
+	UnicodeString(FS->GetBytesInSec()));
+	Memo1-> Lines -> Add(L"Sectors in cluster: "+UnicodeString(FS->GetSecInCluster()));
+	Memo1-> Lines -> Add(L"Bytes in cluster: "+UnicodeString(FS->GetBytesInCluster()));
+	Memo1-> Lines -> Add(L"Total clusters: "+ UnicodeString(FS->GetNumberOfClusters()));
 	Button3 -> Enabled = true;
 	bool Ignore = CheckBox1 -> Checked;
 	ReadT = new Read(false, FS, Ignore, DB);

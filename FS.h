@@ -62,7 +62,6 @@
 		unsigned long BytesInCluster;
 		unsigned long SecInCluster;
 		unsigned long NumOfClusters;
-		const wchar_t* OEM;
 	public:
 		HANDLE GetHandle();
 		unsigned long GetBytesInSec();
@@ -71,6 +70,7 @@
 		unsigned long GetNumberOfClusters();
 		const wchar_t* GetOEM();
 		AFS(const wchar_t* path);
+		const wchar_t* OEM;
 
 };
 
